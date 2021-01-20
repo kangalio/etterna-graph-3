@@ -4,16 +4,17 @@ from typing import *
 import time, logging
 from dataclasses import dataclass
 
+import pyqtgraph as pg
 from PyQt5.Qt import QIcon
 from PyQt5.QtWidgets import QPushButton, QApplication, QMainWindow, QTabWidget, QLabel, QMessageBox
 from PyQt5.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QRadioButton, QFrame, QDialog
 from PyQt5.QtWidgets import QDialogButtonBox, QLineEdit, QStyle
 
-import backend
-import texts
+import backend, texts, globals
 from path_input import request_etterna_profile_paths
 from loading_bar import blocking_loading_bar
 from tab_widget_unlockable import TabWidgetUnlockable
+from xml_stats_tab import XmlStatsTab
 
 
 def confirm_operation(title: str, message: str) -> bool:
@@ -72,15 +73,6 @@ class MainTabWidget(TabWidgetUnlockable):
 			return ChartsStatsTab(self._charts_analysis)
 		else:
 			return None
-
-class XmlStatsTab(QWidget):
-	def __init__(self, stats: backend.XmlStats):
-		super().__init__()
-
-		layout = QVBoxLayout()
-		self.setLayout(layout)
-
-		layout.addWidget(QLabel(str(stats.foo)))
 
 class ReplaysStatsTab(QLabel):
 	def __init__(self, replays_analysis: backend.ReplaysAnalysis):
@@ -149,6 +141,7 @@ if __name__ == "__main__":
 		logging.warning(f"Couldn't load config: {e}")
 		profile_paths = choose_profile(backend.detect_etterna_profiles())
 		config = backend.Config(profile_paths)
+		config.write("etterna-graph-settings.json")
 	
 	xml_stats = blocking_loading_bar(
 		lambda *args: backend.load_xml_stats(config.paths.xml, *args),
@@ -162,6 +155,11 @@ if __name__ == "__main__":
 	file_menu.addAction("About", lambda: QMessageBox.about(None, "About", texts.ABOUT))
 	file_menu.addAction("About Qt", lambda: QApplication.aboutQt())
 	window.show()
+
+	window.setStyleSheet(f"""
+		background-color: {globals.BG_COLOR};
+		color: {globals.TEXT_COLOR};
+	""")
 
 	# start_time = time.time()
 	# while start_time + 20 > time.time():

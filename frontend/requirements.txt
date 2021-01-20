@@ -1,1 +1,2 @@
-pyside6
+PyQt5
+pyqtgraph
