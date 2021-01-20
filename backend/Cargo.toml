@@ -10,15 +10,17 @@ crate-type = ["cdylib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-# pyo3 = { version = "0.12.3", features = ["extension-module"] }
-pyo3 = { path = "/home/kangalioo/dev/rust/_downloaded/pyo3", features = ["extension-module"] }
+# pyo3 = { path = "/home/kangalioo/dev/rust/_downloaded/pyo3", features = ["extension-module"] }
+pyo3 = { git = "https://github.com/kangalioo/pyo3/", features = ["extension-module"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 glob = "0.3"
 chrono = "0.4.19"
 roxmltree = "0.14.0"
-etterna = { package = "etterna_base", path = "/home/kangalioo/dev/rust/etterna-base", features = ["parallel"] }
-etterna_savegame = { path = "/home/kangalioo/dev/rust/etterna-savegame" }
+# etterna = { package = "etterna_base", path = "/home/kangalioo/dev/rust/etterna-base", features = ["parallel"] }
+etterna = { package = "etterna_base", git = "https://github.com/kangalioo/etterna-base", features = ["parallel"] }
+# etterna_savegame = { path = "/home/kangalioo/dev/rust/etterna-savegame" }
+etterna_savegame = { path = "etterna-savegame" }
 
 [profile.dev.package."*"]
 opt-level = 3

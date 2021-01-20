@@ -82,8 +82,10 @@ class ChartsStatsTab(QLabel):
 	def __init__(self, charts_analysis: backend.ChartsAnalysis):
 		super().__init__("Charts stuff: " + repr(charts_analysis))
 
-# `options` list must have at least one entry
-def choose_profile(options: List[backend.EtternaInstallation]) -> backend.EtternaProfilePaths:
+def choose_profile(options: List[backend.EtternaInstallation]) -> Optional[backend.EtternaProfilePaths]:
+	if len(options) == 0:
+		return request_etterna_profile_paths()
+
 	dialog = QDialog()
 	layout = QVBoxLayout()
 	dialog.setLayout(layout)
@@ -124,9 +126,6 @@ def choose_profile(options: List[backend.EtternaInstallation]) -> backend.Ettern
 		.clicked.connect(lambda: submit_return_value(request_etterna_profile_paths()))
 
 	dialog.exec()
-	if not return_value:
-		QMessageBox.critical(None, "Game data required", texts.SAVEGAME_REQUIRED)
-		exit(1)
 	return return_value
 
 if __name__ == "__main__":
@@ -140,6 +139,10 @@ if __name__ == "__main__":
 	except Exception as e:
 		logging.warning(f"Couldn't load config: {e}")
 		profile_paths = choose_profile(backend.detect_etterna_profiles())
+		if not profile_paths:
+			QMessageBox.critical(None, "Game data required", texts.SAVEGAME_REQUIRED)
+			exit(1)
+
 		config = backend.Config(profile_paths)
 		config.write("etterna-graph-settings.json")
 	
